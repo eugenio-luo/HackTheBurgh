@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home</title>
+    <title>Fridge Home</title>
 </head>
 
 <style>
@@ -16,11 +16,21 @@
     border-bottom: 1px solid #ddd;
   }
   
-  tr:hover {background-color: coral;}
+  tr:hover {background-color: rgb(255, 188, 80);}
+
+  h1 {
+    text-align: center; /* Center the text */
+    color: #0e2d41; /* Change the text color */
+    font-family: 'Arial', sans-serif; /* Change the font */
+    font-size: 2.5em; /* Increase the font size */
+    text-shadow: 2px 2px 4px #1616175a; /* Add a text shadow */
+    font-weight: bold;
+  }
 </style>
 
 <body>
-    <h1>Food in the Database</h1>
+    {% include 'index.html' %}
+    <h1>Foods in the fridge</h1>
     <table>
         <tr>
             <th>Food</th>

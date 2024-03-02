@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, abort, request
+from flask import Flask, render_template, redirect, abort, request, session
 import sqlite3
 
 # from flask_session import sessions
@@ -15,7 +15,10 @@ app = Flask(__name__)
 @app.route("/", methods=['GET'])
 def index():
     if request.method == 'GET':
-        return render_template("index.html")
+        message = 'You are not logged in'
+        if 'username' in session:
+            message = f'Logged in as {session["username"]}'
+        return render_template('index.html', message=message)
     abort(400)
 
 #login page
