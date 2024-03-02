@@ -14,7 +14,7 @@ def index():
         return render_template("index.html")
     abort(400)
     
-@app.route("/", methods = ['GET'])
+@app.route("/login", methods = ['GET'])
 def login():
     if request.method == 'GET':
         return render_template("login.html")
