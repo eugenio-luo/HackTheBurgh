@@ -20,6 +20,8 @@ def login():
         return render_template("login.html")
     elif request.method == 'POST':
         pass
+    else:
+        abort(400)
     
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -27,3 +29,5 @@ def signup():
         return render_template("signup.html")
     elif request.method == 'POST':
         pass
+    else:
+        abort(400)
