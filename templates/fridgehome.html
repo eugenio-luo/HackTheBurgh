@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Food in the Database</h1>
+    <table>
+        <tr>
+            <th>Food</th>
+            <th>Quantity</th>
+            <th>Expiration Date</th>
+            <th>Predicted Expiration Date</th>
+            <th>Photo</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}</td>
+            <td><img src="{{ item[4] }}" alt="{{ item[0] }}"></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
