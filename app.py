@@ -1,8 +1,7 @@
-from flask import Flask, render_template, redirect, abort, request, session
+from flask import Flask, render_template, redirect, abort, request, sessions, url_for
 import sqlite3
 
 # from flask_session import sessions
-# from flask_login import login_user, logout_user, login_required
 # from flask_mail import Mail
 # from werkzeug.utils import secure_filename
 # from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,14 +10,12 @@ import sqlite3
 
 app = Flask(__name__)
 
+
 #landing page for app, so probably Introduction, link to login page, link to sign up page
 @app.route("/", methods=['GET'])
 def index():
     if request.method == 'GET':
-        message = 'You are not logged in'
-        if 'username' in session:
-            message = f'Logged in as {session["username"]}'
-        return render_template('index.html', message=message)
+        return render_template('index.html')
     abort(400)
 
 #login page
@@ -44,17 +41,62 @@ def fridge():
     if request.method == 'GET':
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
-            items = cur.execute("SELECT Food FROM Food")
+            items = cur.execute("SELECT * FROM Food")
         
         return render_template("fridgehome.html", items=items)
     abort(400)
 
 
-@app.route("/editfridge", methods = ['GET', 'POST'])
-def editfridge():
-    if request.method == 'GET':
-        return render_template()
-    elif request.method == 'POST':
-        return render_template()
-    else:
-        abort(400)
+# @app.route("/addtofridge", methods = ['GET', 'POST'])
+# def add_to_fridge():
+#     if request.method == 'GET':
+#         return render_template('editfridge.html')
+#     elif request.method == 'POST':
+#         quantity = request.form.get('quantity')
+#         food_name = request.form.get('food_name')
+#         expiration_date = request.form.get('expiration_date')
+
+#         # Check if the food item already exists
+#         with sqlite3.connect('FoodDB.db') as con:
+#             cur = con.cursor()
+#             cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
+#             food = cur.fetchone()
+        
+#             if food:
+#                 # Update the existing food item
+#                 cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
+#                 con.commit()
+#                 return redirect(url_for('fridge'))
+#             else:
+#                 # Add a new food item
+#                 cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
+#                 con.commit()
+#         return redirect(url_for('fridge'))  
+#     else:
+#         abort(400)
+
+# @app.route('/editfridge/<Food>', methods=['GET', 'POST'])
+# def edit_fridge(food_name):
+#     with sqlite3.connect('FoodDB.db') as con:
+#         cur = con.cursor()
+#         cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
+#         food = cur.fetchone()
+
+#     if request.method == 'POST':
+#         quantity = request.form.get('quantity')
+#         expiration_date = request.form.get('expiration_date')
+#         cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
+#         con.commit()
+#         return redirect(url_for('fridge'))
+
+#     return render_template('editfridge.html', food=food)
+
+@app.route('/deletefridge', methods=['POST'])
+def deletefridge():
+    food_id = request.form.get('food_id')
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        cur.execute("DELETE FROM Food WHERE key = ?", (food_id,))
+
+        con.commit()
+    return redirect(url_for('fridge'))

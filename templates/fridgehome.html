@@ -16,7 +16,7 @@
     border-bottom: 1px solid #ddd;
   }
   
-  tr:hover {background-color: rgb(255, 188, 80);}
+  tr:hover {background-color: rgb(162, 190, 217);}
 
   h1 {
     text-align: center; /* Center the text */
@@ -30,9 +30,14 @@
 
 <body>
     {% include 'index.html' %}
-    <h1>Foods in the fridge</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="visibility: hidden;"><a href="/addtofridge">Add</a></div> <!-- Invisible placeholder -->
+      <h1>Foods in the fridge</h1>
+      <a href="/addtofridge">Add</a>
+    </div>
     <table>
         <tr>
+            <th>id</th>
             <th>Food</th>
             <th>Quantity</th>
             <th>Expiration Date</th>
@@ -46,6 +51,13 @@
             <td>{{ item[2] }}</td>
             <td>{{ item[3] }}</td>
             <td><img src="{{ item[4] }}" alt="{{ item[0] }}"></td>
+            <td><a href="/editfridge?food_name={{ item[1] }}">Edit</a></td>
+            <td>
+              <form method="POST" action="/deletefridge">
+                  <input type="hidden" name="food_id" value="{{ item[0] }}">
+                  <input type="submit" value="Delete">
+              </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
