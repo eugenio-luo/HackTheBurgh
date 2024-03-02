@@ -47,49 +47,49 @@ def fridge():
     abort(400)
 
 
-# @app.route("/addtofridge", methods = ['GET', 'POST'])
-# def add_to_fridge():
-#     if request.method == 'GET':
-#         return render_template('editfridge.html')
-#     elif request.method == 'POST':
-#         quantity = request.form.get('quantity')
-#         food_name = request.form.get('food_name')
-#         expiration_date = request.form.get('expiration_date')
+@app.route("/addtofridge", methods = ['GET', 'POST'])
+def add_to_fridge():
+    if request.method == 'GET':
+        return render_template('add_to_fridge.html')
+    elif request.method == 'POST':
+        quantity = request.form.get('quantity')
+        food_name = request.form.get('food_name')
+        expiration_date = request.form.get('expiration_date')
 
-#         # Check if the food item already exists
-#         with sqlite3.connect('FoodDB.db') as con:
-#             cur = con.cursor()
-#             cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
-#             food = cur.fetchone()
+        # Check if the food item already exists
+        with sqlite3.connect('FoodDB.db') as con:
+            cur = con.cursor()
+            cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
+            food = cur.fetchone()
         
-#             if food:
-#                 # Update the existing food item
-#                 cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
-#                 con.commit()
-#                 return redirect(url_for('fridge'))
-#             else:
-#                 # Add a new food item
-#                 cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
-#                 con.commit()
-#         return redirect(url_for('fridge'))  
-#     else:
-#         abort(400)
+            if food:
+                # Update the existing food item
+                cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
+                con.commit()
+                return redirect(url_for('fridge'))
+            else:
+                # Add a new food item
+                cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
+                con.commit()
+        return redirect(url_for('fridge'))  
+    else:
+        abort(400)
 
-# @app.route('/editfridge/<Food>', methods=['GET', 'POST'])
-# def edit_fridge(food_name):
-#     with sqlite3.connect('FoodDB.db') as con:
-#         cur = con.cursor()
-#         cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
-#         food = cur.fetchone()
+@app.route('/editfridge/<Food>', methods=['GET', 'POST'])
+def edit_fridge(food_name):
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
+        food = cur.fetchone()
 
-#     if request.method == 'POST':
-#         quantity = request.form.get('quantity')
-#         expiration_date = request.form.get('expiration_date')
-#         cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
-#         con.commit()
-#         return redirect(url_for('fridge'))
+    if request.method == 'POST':
+        quantity = request.form.get('quantity')
+        expiration_date = request.form.get('expiration_date')
+        cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
+        con.commit()
+        return redirect(url_for('fridge'))
 
-#     return render_template('editfridge.html', food=food)
+    return render_template('add_to_fridge.html', food=food)
 
 @app.route('/deletefridge', methods=['POST'])
 def deletefridge():
