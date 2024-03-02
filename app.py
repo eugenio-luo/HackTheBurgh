@@ -39,12 +39,13 @@ def logout():
 @app.route("/fridge", methods = ['GET'])
 def fridge():
     if request.method == 'GET':
-        con = sqlite3.connect("FoodDB.db")
-        cur = con.cursor()
-        items = cur.execute("SELECT Food FROM Food")
+        with sqlite3.connect('FoodDB.db') as con:
+            cur = con.cursor()
+            items = cur.execute("SELECT Food FROM Food")
         
         return render_template("fridgehome.html", items=items)
     abort(400)
+
 
 @app.route("/editfridge", methods = ['GET', 'POST'])
 def editfridge():
