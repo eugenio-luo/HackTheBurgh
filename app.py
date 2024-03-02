@@ -14,12 +14,16 @@ def index():
         return render_template("index.html")
     abort(400)
     
-@app.route("/login", methods = ['GET'])
+@app.route("/login", methods = ['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("login.html")
+    elif request.method == 'POST':
+        pass
     
-@app.route("/signup", methods=['GET'])
+@app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if request.method == 'GET':
         return render_template("signup.html")
+    elif request.method == 'POST':
+        pass
