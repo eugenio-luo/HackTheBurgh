@@ -19,3 +19,7 @@ def login():
     if request.method == 'GET':
         return render_template("login.html")
     
+@app.route("/signup", methods=['GET'])
+def signup():
+    if request.method == 'GET':
+        return render_template("signup.html")
