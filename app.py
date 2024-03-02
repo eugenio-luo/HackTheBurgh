@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, abort, request
-from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 
 # from flask_session import sessions
