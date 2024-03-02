@@ -19,11 +19,35 @@ def index():
         return render_template("index.html")
     abort(400)
 
-@app.route("/fridgehome", methods=['GET'])
-def fridge_home():
+#login page
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    #load one page for login
     if request.method == 'GET':
-      cur = con.cursor()
-      cur.execute("SELECT Food, Quantity, ExpirationDate, PredictedExpirationDate, Photo FROM food")
-      items = cur.fetchall()
-      return render_template('fridgehome.html', items=items)
+        return render_template("login.html")
+    #load one page for post
+    elif request.method == 'POST':
+        return render_template()
+    #abort
+    else:
+        abort(400)
+#Follow same pattern for methods
+
+@app.route("/logout")
+def logout():
+    return redirect("/")
+
+@app.route("/fridge", methods = ['GET'])
+def fridge():
+    if request.method == 'GET':
+        return render_template("fridgehome.html")
     abort(400)
+
+@app.route("/editfridge", methods = ['GET', 'POST'])
+def editfridge():
+    if request.method == 'GET':
+        return render_template()
+    elif request.method == 'POST':
+        return render_template()
+    else:
+        abort(400)
