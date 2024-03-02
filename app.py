@@ -1,13 +1,13 @@
-from flask import Flask, render_template, redirect, abort, request
+from flask import Flask, render_template, redirect, abort, request, flash
 from flask_session import sessions
 from flask_login import login_user, logout_user, login_required
 from flask_mail import Mail
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-import mysql.connector
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = b'bhfvhsshvbdjhbs'
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
 @app.route("/", methods=['GET'])
@@ -30,18 +30,25 @@ def signup():
     if request.method == 'GET':
         return render_template("signup.html")
     elif request.method == 'POST':
+        
         firstname = request.form['firstname'].strip().lower()
         surname = request.form['surname'].strip().lower()
         username = request.form['username'].strip().lower()
         email = request.form['email'].strip().lower()
         password = request.form['pwd']
+        password2 = request.form['pwd2']
         
-        with sqlite3.connect('FoodDB.db') as con:
-            cur = con.cursor()
-            cur.execute("""INSERT INTO Users (FirstName,LastName,Username,Email,Password)
-                        VALUES (?,?,?,?,?);""", (firstname,surname,username,email,password,))
-            
-        return render_template('index.html')
+        if password != password2:
+            error = 'Invalid Credentials'
+            flash(error)
+            return render_template('signup.html', error=error)
+        else:
+            with sqlite3.connect('FoodDB.db') as con:
+                cur = con.cursor()
+                cur.execute("""INSERT INTO Users (FirstName,LastName,Username,Email,Password)
+                            VALUES (?,?,?,?,?);""", (firstname,surname,username,email,password,))
+                
+            return render_template('index.html')
     else:
         abort(400)
         
