@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 
 app = Flask(__name__)
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)
 app.secret_key = b'bhfvhsshvbdjhbs'
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
@@ -37,9 +39,19 @@ def signup():
         email = request.form['email'].strip().lower()
         password = request.form['pwd']
         password2 = request.form['pwd2']
+        usernames = getUsernames()
+        emails = getEmails()
         
         if password != password2:
-            error = 'Invalid Credentials'
+            error = 'Passwords must match'
+            flash(error)
+            return render_template('signup.html', error=error)
+        elif (username, ) in usernames:
+            error = 'Username already exists'
+            flash(error)
+            return render_template('signup.html', error=error)
+        elif (email, ) in emails:
+            error = 'Email already in use'
             flash(error)
             return render_template('signup.html', error=error)
         else:
@@ -52,5 +64,16 @@ def signup():
     else:
         abort(400)
         
+def getUsernames():
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        cur.execute("SELECT Username from Users")
+        usernames =  cur.fetchall()
+    return usernames
 
-    
+def getEmails():
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        cur.execute("SELECT Email from Users")
+        emails =  cur.fetchall()
+    return emails
