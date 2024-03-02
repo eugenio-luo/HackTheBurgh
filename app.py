@@ -30,16 +30,17 @@ def signup():
     if request.method == 'GET':
         return render_template("signup.html")
     elif request.method == 'POST':
-        pass
+        firstname = request.form['firstname'].strip().lower()
+        surname = request.form['surname'].strip().lower()
+        username = request.form['username'].strip().lower()
+        email = request.form['email'].strip().lower()
+        password = request.form['pwd']
+        
+        with sqlite3.connect('FoodDB.db') as con:
+            cur = con.cursor()
+            cur.execute(f'INSERT INTO Users VALUES ({firstname},{surname},{username},{email},{password})')
     else:
         abort(400)
         
-        
-def checkLoginDetails(username, pword):
-    with sqlite3.connect('FoodDB.db') as con:
-        cur = con.cursor()
-        cur.execute(f"SELECT pword FROM Users WHERE Username = {username}")
-        correctPword = str(cur.fetchall())
-    
-    return pword == correctPword
+
     
