@@ -43,7 +43,7 @@ def fridge():
             cur = con.cursor()
             items = cur.execute("SELECT * FROM Food")
         
-        return render_template("fridgehome.html", items=items)
+        return render_template("fridge_home.html", items=items)
     abort(400)
 
 
