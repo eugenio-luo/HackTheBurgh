@@ -51,7 +51,7 @@
             <td>{{ item[2] }}</td>
             <td>{{ item[3] }}</td>
             <td><img src="{{ item[4] }}" alt="{{ item[0] }}"></td>
-            <td><a href="/editfridge?food_name={{ item[1] }}">Edit</a></td>
+            <td><a href="/editfridge/{{ item[1] }}">Edit</a></td>
             <td>
               <form method="POST" action="/deletefridge">
                   <input type="hidden" name="food_id" value="{{ item[0] }}">

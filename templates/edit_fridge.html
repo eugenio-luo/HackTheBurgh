@@ -1,0 +1,20 @@
+<h2>Current Food Data</h2>
+<p>Food Name: {{ food[1] }}</p>
+<p>Quantity: {{ food[2] }}</p>
+<p>Expiration Date: {{ food[3] }}</p>
+
+<h2>Edit Food Data</h2>
+
+<form method="POST">
+  <label for="food_name">Food Name:</label>
+  <input type="text" id="food_name" name="food_name" required>
+
+  <label for="quantity">Quantity:</label>
+  <input type="number" id="quantity" name="quantity" required>
+
+  <label for="expiration_date">Expiration Date:</label>
+  <input type="date" id="expiration_date" name="expiration_date" required>
+
+  <input type="submit" value="Submit">
+</form>
+

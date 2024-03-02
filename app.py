@@ -75,7 +75,7 @@ def add_to_fridge():
     else:
         abort(400)
 
-@app.route('/editfridge/<Food>', methods=['GET', 'POST'])
+@app.route('/editfridge/<food_name>', methods=['GET', 'POST'])
 def edit_fridge(food_name):
     with sqlite3.connect('FoodDB.db') as con:
         cur = con.cursor()
@@ -83,13 +83,14 @@ def edit_fridge(food_name):
         food = cur.fetchone()
 
     if request.method == 'POST':
+        food_name = request.form.get('food_name')
         quantity = request.form.get('quantity')
         expiration_date = request.form.get('expiration_date')
-        cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
+        cur.execute("UPDATE Food SET Food = ?, Quantity = ?, ExpirationDate = ?", (food_name, quantity, expiration_date))
         con.commit()
         return redirect(url_for('fridge'))
 
-    return render_template('add_to_fridge.html', food=food)
+    return render_template('edit_fridge.html', food=food)
 
 @app.route('/deletefridge', methods=['POST'])
 def deletefridge():
