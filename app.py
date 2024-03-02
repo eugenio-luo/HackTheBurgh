@@ -4,6 +4,8 @@ from flask_login import login_user, logout_user, login_required
 from flask_mail import Mail
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+import mysql.connector
+import sqlite3
 
 app = Flask(__name__)
 
@@ -31,3 +33,13 @@ def signup():
         pass
     else:
         abort(400)
+        
+        
+def checkLoginDetails(username, pword):
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        cur.execute(f"SELECT pword FROM Users WHERE Username = {username}")
+        correctPword = str(cur.fetchall())
+    
+    return pword == correctPword
+    
