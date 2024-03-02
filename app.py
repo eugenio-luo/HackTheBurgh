@@ -7,7 +7,7 @@ import sqlite3
 # from werkzeug.utils import secure_filename
 # from werkzeug.security import generate_password_hash, check_password_hash
 
-con = sqlite3.connect("FoodDB.db")
+
 
 app = Flask(__name__)
 
@@ -39,7 +39,11 @@ def logout():
 @app.route("/fridge", methods = ['GET'])
 def fridge():
     if request.method == 'GET':
-        return render_template("fridgehome.html")
+        con = sqlite3.connect("FoodDB.db")
+        cur = con.cursor()
+        items = cur.execute("SELECT Food FROM Food")
+        
+        return render_template("fridgehome.html", items=items)
     abort(400)
 
 @app.route("/editfridge", methods = ['GET', 'POST'])
