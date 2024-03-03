@@ -5,8 +5,8 @@ def login_user(user):
     session['username'] = user
     return redirect("/fridge")
 
-def logout_user(user):
-    session.pop(user, None)
+def logout_user():
+    session.pop('username', None)
     return redirect("/")
 
 def login_required(f):

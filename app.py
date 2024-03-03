@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, abort, request
-from flask_session import sessions
+from flask_session import Session
 from flask_mail import Mail
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,6 +7,10 @@ import sqlite3
 from login import login_user, logout_user, login_required
 
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+app.config.from_object(__name__)
+Session(app)
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
 @app.route("/", methods=['GET'])
