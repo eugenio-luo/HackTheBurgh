@@ -29,8 +29,8 @@ def login():
     elif request.method == 'POST':
         with sqlite3.connect("FoodDB.db") as con:
             cur = con.cursor()
-            username = request.form.get("").strip().lower()
-            password = request.form.get("")
+            username = request.form.get("username").strip().lower()
+            password = request.form.get("pwd")
             correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", username)
             if check_password_hash(correctpassword, password):
                 login_user(username)
