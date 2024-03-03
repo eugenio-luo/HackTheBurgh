@@ -75,29 +75,28 @@ def add_to_fridge():
     else:
         abort(400)
 
-@app.route('/editfridge/<food_name>', methods=['GET', 'POST'])
-def edit_fridge(food_name):
+@app.route('/editfridge', methods=['POST'])
+def edit_fridge():
     with sqlite3.connect('FoodDB.db') as con:
         cur = con.cursor()
-        cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
-        food = cur.fetchone()
-
-    if request.method == 'POST':
         food_name = request.form.get('food_name')
         quantity = request.form.get('quantity')
         expiration_date = request.form.get('expiration_date')
-        cur.execute("UPDATE Food SET Food = ?, Quantity = ?, ExpirationDate = ?", (food_name, quantity, expiration_date))
+        cur.execute("UPDATE Food SET Food = ?, Quantity = ?, ExpirationDate = ? WHERE Food = ?", (food_name, quantity, expiration_date, food_name))
         con.commit()
-        return redirect(url_for('fridge'))
+        return redirect('/fridge')
 
-    return render_template('edit_fridge.html', food=food)
 
 @app.route('/deletefridge', methods=['POST'])
 def deletefridge():
-    food_id = request.form.get('food_id')
+    food_name = request.form.get('food_name')
     with sqlite3.connect('FoodDB.db') as con:
         cur = con.cursor()
-        cur.execute("DELETE FROM Food WHERE key = ?", (food_id,))
+        cur.execute("DELETE FROM Food WHERE Food = ?", (food_name,))
 
         con.commit()
     return redirect(url_for('fridge'))
+
+# have edit form hidden under table, when edit button pressed, it unhides it, and after submit, it refreshes and hids it again
+# using document.queryselector
+# add event listener
