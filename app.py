@@ -30,12 +30,9 @@ def send_email():
         for email in emails:
             message="Don't forget to check your fridge today"
             subject="reminder"
-            msg = Message(recipients = [email[0]], body = 'Check Email', subject = subject)
+            sender = "welovejuliansomuch@gmail.com"
+            msg = Message(recipients = [email[0]], body = 'Check Email', subject = subject, sender=sender)
             conn.send(msg)
-
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=send_email, trigger="interval", seconds=60)
-scheduler.start()
 
 @app.route('/check_expiry_dates')
 def check_expiry_dates():
@@ -49,15 +46,15 @@ def check_expiry_dates():
                 send_email(user['Email'])
     return 'Checked expiry dates'
 
-def send_email(recipient):
-    with mail.connect() as conn:
-        pass
-        
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=send_email, trigger="interval", seconds=120)
+scheduler.start()
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
 @app.route("/", methods=['GET'])
 def index():
     if request.method == 'GET':
+        send_email()
         return render_template('index.html')
     abort(400)
 
