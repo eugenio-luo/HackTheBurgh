@@ -9,6 +9,7 @@ from login import login_user, logout_user, login_required
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
+#Keep SECRET!!!!!!!!!!!!
 app.config['SECRET_KEY'] = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 app.config.from_object(__name__)
 Session(app)
@@ -52,7 +53,8 @@ def fridge():
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
             userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
-            items = cur.execute("SELECT * FROM Food WHERE User = ?", userid[0])
+            userid = str(userid[0])
+            items = cur.execute("SELECT * FROM Food WHERE User = ?", userid)
         
         return render_template("fridge_home.html", items=items)
     abort(400)
@@ -73,12 +75,12 @@ def add_to_fridge():
         food_name = request.form.get('food_name')
         expiration_date = request.form.get('expiration_date')
 
-        # Check if the food item already exists
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
-            cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
-    
-            cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
+            cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))   
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            userid = userid[0] 
+            cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate, User) VALUES (?, ?, ?, ?)", (food_name, quantity, expiration_date, userid))
             con.commit()
         return redirect(url_for('fridge'))  
     else:
