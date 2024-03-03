@@ -4,8 +4,10 @@ from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+import atexit
 from login import login_user, logout_user, login_required
-from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
@@ -22,6 +24,19 @@ app.config['MAIL_USERNAME'] = 'welovejuliansomuch@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ucqq hqbt lrep ryyo'
 mail = Mail(app)
 
+def send_email():
+    with mail.connect() as conn:
+        emails = getEmails()
+        for email in emails:
+            message="Don't forget to check your fridge today"
+            subject="reminder"
+            msg = Message(recipients = [email[0]], body = 'Check Email', subject = subject)
+            conn.send(msg)
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=send_email, trigger="interval", seconds=600)
+scheduler.start()
+
 @app.route('/check_expiry_dates')
 def check_expiry_dates():
     with sqlite3.connect('FoodDB.db') as con:
@@ -36,6 +51,7 @@ def check_expiry_dates():
 
 def send_email(recipient):
     with mail.connect() as conn:
+        pass
         
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
@@ -188,3 +204,5 @@ def getEmails():
         cur.execute("SELECT Email from Users")
         emails =  cur.fetchall()
     return emails
+
+atexit.register(lambda: scheduler.shutdown())
