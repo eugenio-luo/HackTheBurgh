@@ -24,6 +24,7 @@ mail = Mail(app)
 
 def send_email():
     with mail.connect() as conn:
+        pass
         
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
@@ -45,7 +46,7 @@ def login():
             cur = con.cursor()
             username = request.form.get("username").strip().lower()
             password = request.form.get("pwd")
-            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", username).fetchone()
+            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", (username,)).fetchone()
             if check_password_hash(correctpassword[0], password):
                 login_user(username)
                 return redirect("/fridge")
@@ -63,7 +64,7 @@ def fridge():
     if request.method == 'GET':
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
-            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", (session['username'],)).fetchone()
             userid = str(userid[0])
             items = cur.execute("SELECT * FROM Food WHERE User = ?", userid)
         
@@ -89,7 +90,7 @@ def add_to_fridge():
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
             cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))   
-            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", (session['username'],)).fetchone()
             userid = userid[0] 
             cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate, User) VALUES (?, ?, ?, ?)", (food_name, quantity, expiration_date, userid))
             con.commit()
