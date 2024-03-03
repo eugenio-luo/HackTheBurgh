@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, abort, request, flash, url_for, session
 from flask_session import Session
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
@@ -22,8 +22,25 @@ app.config['MAIL_USERNAME'] = 'welovejuliansomuch@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ucqq hqbt lrep ryyo'
 mail = Mail(app)
 
-def send_email():
+@app.route('/check_expiry_dates')
+def check_expiry_dates():
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        items = cur.execute("SELECT * FROM Food").fetchall()
+        for item in items:
+            expiry_date = datetime.strptime(item['ExpirationDate'], '%Y-%m-%d')
+            if expiry_date - datetime.now() <= timedelta(days=3):
+                user = cur.execute("SELECT * FROM Users WHERE Key = ?", (item['User'],)).fetchone()
+                send_email(user['Email'])
+    return 'Checked expiry dates'
+
+def send_email(recipient):
     with mail.connect() as conn:
+        msg = Message('Your food is about to expire',
+                      sender='welovejuliansomuch@gmail.com',
+                      recipients=[recipient])
+        msg.body = 'Your food will expire in less than 3 days. Please consume it as soon as possible.'
+        conn.send(msg)
         
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
@@ -45,7 +62,7 @@ def login():
             cur = con.cursor()
             username = request.form.get("username").strip().lower()
             password = request.form.get("pwd")
-            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", username).fetchone()
+            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", (username,)).fetchone()
             if check_password_hash(correctpassword[0], password):
                 login_user(username)
                 return redirect("/fridge")
@@ -63,7 +80,7 @@ def fridge():
     if request.method == 'GET':
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
-            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", (session['username'],)).fetchone()
             userid = str(userid[0])
             items = cur.execute("SELECT * FROM Food WHERE User = ?", userid)
         
@@ -89,7 +106,7 @@ def add_to_fridge():
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
             cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))   
-            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", (session['username'],)).fetchone()
             userid = userid[0] 
             cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate, User) VALUES (?, ?, ?, ?)", (food_name, quantity, expiration_date, userid))
             con.commit()
