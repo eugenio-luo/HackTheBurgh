@@ -4,3 +4,6 @@ flask_session/2029240f6d1128be89ddc32729463129
 flask_session/706db1f158f6fb924984f2aa2fe0600d
 __pycache__/login.cpython-310.pyc
 .DS_Store
+bin/python3~HEAD_1
+bin/python3.12~HEAD_1
+bin/python~HEAD_1
