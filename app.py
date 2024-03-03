@@ -60,17 +60,9 @@ def add_to_fridge():
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
             cur.execute("SELECT * FROM Food WHERE Food = ?", (food_name,))
-            food = cur.fetchone()
-        
-            if food:
-                # Update the existing food item
-                cur.execute("UPDATE Food SET Quantity = ?, ExpirationDate = ? WHERE Food = ?", (quantity, expiration_date, food_name))
-                con.commit()
-                return redirect(url_for('fridge'))
-            else:
-                # Add a new food item
-                cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
-                con.commit()
+    
+            cur.execute("INSERT INTO Food (Food, Quantity, ExpirationDate) VALUES (?, ?, ?)", (food_name, quantity, expiration_date))
+            con.commit()
         return redirect(url_for('fridge'))  
     else:
         abort(400)
@@ -79,20 +71,21 @@ def add_to_fridge():
 def edit_fridge():
     with sqlite3.connect('FoodDB.db') as con:
         cur = con.cursor()
+        id = request.form.get('id')
         food_name = request.form.get('food_name')
         quantity = request.form.get('quantity')
         expiration_date = request.form.get('expiration_date')
-        cur.execute("UPDATE Food SET Food = ?, Quantity = ?, ExpirationDate = ? WHERE Food = ?", (food_name, quantity, expiration_date, food_name))
+        cur.execute("UPDATE Food SET Food = ?, Quantity = ?, ExpirationDate = ? WHERE Key = ?", (food_name, quantity, expiration_date, id))
         con.commit()
         return redirect('/fridge')
 
 
 @app.route('/deletefridge', methods=['POST'])
 def deletefridge():
-    food_name = request.form.get('food_name')
+    id = request.form.get('id')
     with sqlite3.connect('FoodDB.db') as con:
         cur = con.cursor()
-        cur.execute("DELETE FROM Food WHERE Food = ?", (food_name,))
+        cur.execute("DELETE FROM Food WHERE Key = ?", (id,))
 
         con.commit()
     return redirect(url_for('fridge'))
