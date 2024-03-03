@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, abort, request, flash
+from flask import Flask, render_template, redirect, abort, request, flash, url_for, session
 from flask_session import Session
 from flask_mail import Mail
 from werkzeug.utils import secure_filename
@@ -33,8 +33,8 @@ def login():
             cur = con.cursor()
             username = request.form.get("username").strip().lower()
             password = request.form.get("pwd")
-            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", username)
-            if check_password_hash(correctpassword, password):
+            correctpassword = cur.execute("SELECT Password FROM Users WHERE Username = ?", username).fetchone()
+            if check_password_hash(correctpassword[0], password):
                 login_user(username)
                 return redirect("/fridge")
             else:
@@ -46,11 +46,13 @@ def login():
         
 
 @app.route("/fridge", methods = ['GET'])
+@login_required
 def fridge():
     if request.method == 'GET':
         with sqlite3.connect('FoodDB.db') as con:
             cur = con.cursor()
-            items = cur.execute("SELECT * FROM Food")
+            userid = cur.execute("SELECT Key FROM Users WHERE Username = ?", session['username']).fetchone()
+            items = cur.execute("SELECT * FROM Food WHERE User = ?", userid[0])
         
         return render_template("fridge_home.html", items=items)
     abort(400)

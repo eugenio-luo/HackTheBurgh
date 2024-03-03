@@ -16,12 +16,15 @@
           <li class="nav-item">
             <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
           </li>
+          {% if not session['username'] %}
           <li class="nav-item">
             <a class="nav-link" href="/signup">Sign up</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>
+          {% endif %}
+          {% if session['username'] %}
           <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
           </li>
@@ -34,6 +37,7 @@
           <li class="nav-item">
             <a class="nav-link" href="/editfridge">Edit</a>
           </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
