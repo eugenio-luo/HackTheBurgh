@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, abort, request, flash, url_for, session
 from flask_session import Session
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
@@ -22,9 +22,20 @@ app.config['MAIL_USERNAME'] = 'welovejuliansomuch@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ucqq hqbt lrep ryyo'
 mail = Mail(app)
 
-def send_email():
+@app.route('/check_expiry_dates')
+def check_expiry_dates():
+    with sqlite3.connect('FoodDB.db') as con:
+        cur = con.cursor()
+        items = cur.execute("SELECT * FROM Food").fetchall()
+        for item in items:
+            expiry_date = datetime.strptime(item['ExpirationDate'], '%Y-%m-%d')
+            if expiry_date - datetime.now() <= timedelta(days=3):
+                user = cur.execute("SELECT * FROM Users WHERE Key = ?", (item['User'],)).fetchone()
+                send_email(user['Email'])
+    return 'Checked expiry dates'
+
+def send_email(recipient):
     with mail.connect() as conn:
-        pass
         
 
 #landing page for app, so probably Introduction, link to login page, link to sign up page
