@@ -34,7 +34,7 @@ def send_email():
             conn.send(msg)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=send_email, trigger="interval", seconds=600)
+scheduler.add_job(func=send_email, trigger="interval", seconds=60)
 scheduler.start()
 
 @app.route('/check_expiry_dates')
