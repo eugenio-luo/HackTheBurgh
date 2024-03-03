@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fridge Home</title>
+</head>
+
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  tr:hover {background-color: rgb(162, 190, 217);}
+
+  h1 {
+    text-align: center; /* Center the text */
+    color: #0e2d41; /* Change the text color */
+    font-family: 'Arial', sans-serif; /* Change the font */
+    font-size: 2.5em; /* Increase the font size */
+    text-shadow: 2px 2px 4px #1616175a; /* Add a text shadow */
+    font-weight: bold;
+  }
+</style>
+
+<body>
+    {% include 'index.html' %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="visibility: hidden;"><a href="/addtofridge">Add</a></div> <!-- Invisible placeholder -->
+      <h1>Foods in the fridge</h1>
+      <a href="/addtofridge">Add</a>
+    </div>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Food</th>
+            <th>Quantity</th>
+            <th>Expiration Date</th>
+            <th>Predicted Expiration Date</th>
+            <th>Photo</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}</td>
+            <td>{{ item[4] }}</td>
+            <td><img src="{{ item[5] }}" alt="{{ item[5] }}"></td>
+            <td>
+        
+              <button type="button" onclick="changeVisibility('{{ item[0] }}')">Edit</button>
+              <script>
+                function changeVisibility(id) {
+                  formId = id + "editForm";
+
+                  if (document.getElementById(formId).style.visibility == "collapse")
+                    document.getElementById(formId).style.visibility = "visible";
+                  else
+                    document.getElementById(formId).style.visibility = "collapse";
+                }
+                </script>
+
+              <div id="{{ item[0] }}editForm" class="editForm" style="visibility: collapse;">
+                <form method="POST" action="/editfridge">
+                  <input name = "id" value = "{{ item[0] }}" type = "hidden">
+                  <label for="food_name">Food Name:</label>
+                  <input type="text" id="food_name" name="food_name" required>
+                
+                  <label for="quantity">Quantity:</label>
+                  <input type="number" id="quantity" name="quantity" required>
+                
+                  <label for="expiration_date">Expiration Date:</label>
+                  <input type="date" id="expiration_date" name="expiration_date" required>
+
+                  <input type="submit" value="Submit">
+                </form>
+              </div>
+
+              <form method="POST" action="/deletefridge">
+                  <input type="hidden" name="id" value="{{ item[0] }}">
+                  <input type="submit" value="Delete">
+              </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html> 
