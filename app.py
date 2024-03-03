@@ -58,7 +58,8 @@ def signup():
             with sqlite3.connect('FoodDB.db') as con:
                 cur = con.cursor()
                 cur.execute("""INSERT INTO Users (FirstName,LastName,Username,Email,Password)
-                            VALUES (?,?,?,?,?);""", (firstname,surname,username,email,password,))
+                            VALUES (?,?,?,?,?);""", 
+                            (firstname,surname,username,email,generate_password_hash(password, method='pbkdf2', salt_length=16),))
                 
             return render_template('index.html')
     else:
